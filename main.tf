@@ -50,7 +50,7 @@ module "RGroups" {
 
 //Log Analytics
 module "LogAnalitycs" {
-  source                = "Modules/LogAnalitycs"
+  source                = "./Modules/LogAnalitycs"
   name                  = var.loganalytics_name
   depends_on            = [module.RGroups] // Dependencia Explicita.
   resource_group_name   = join("," , module.RGroups.name[*].RGEU2001.name) // Dependencia implicita
@@ -68,7 +68,7 @@ module "LogAnalitycs" {
 }
 //SQLServer
 module "SQLServer" {
-  source                       = "Modules/SQLServer"
+  source                       = "./Modules/SQLServer"
   depends_on                   = [module.RGroups, module.LogAnalitycs]
   location                     = join("," , module.RGroups.name[*].RGEU2001.location)  
   sc_name                      = "holaychao"
@@ -100,7 +100,7 @@ module "SQLServer" {
 //AppServices
 module "Appservice" {
   for_each = var.tupla_rgname_lc
-  source  = "Modules/AppServices"
+  source  = "./Modules/AppServices"
   depends_on  = [module.RGroups, module.SQLServer]
   asp_name = "${var.asp_name}${substr(each.value.location, 0, 4)}"
   wa_name  = "${var.wa_name}${substr(each.value.location, 0, 4)}"
@@ -127,7 +127,7 @@ module "Appservice" {
 
 //FrontDoor
 module "Frontdoor" {
-  source  = "Modules/FrontDoor"
+  source  = "./Modules/FrontDoor"
   tags     = merge(local.common_tags)
   frontdoorname = var.frontdoor_name
   location = "Global"
